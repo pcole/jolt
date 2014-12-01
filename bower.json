@@ -1,0 +1,18 @@
+{
+	"name": "jolt",
+	"version": "0.0.1",
+	"homepage": "http://github.com/pcole/jolt/",
+	"authors": [
+		"Philip Cole <philip@pcole.me>"
+	],
+	"description": "A small canvas animation utility",
+	"main": ["index.js"],
+	"keywords": [
+		"canvas",
+		"easing",
+		"animation",
+		"transition",
+		"scale",
+	],
+	"license": "MIT"
+}
