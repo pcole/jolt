@@ -16,5 +16,7 @@ jolt.draw('circle', function(ctx){
 });
 
 jolt.transition('circle', 'expandIn', function(){
-	jolt.transition('circle', 'shrinkOut');
+	jolt.transition('circle', 'shrinkOut', function(){
+		jolt.destroy('circle');
+	});
 });

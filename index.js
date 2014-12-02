@@ -43,7 +43,12 @@
 		}
 
 		for (var key in defaults) {
-			this[key] = options[key] || defaults[key];
+			if(key in options){
+				this[key] = options[key];
+			}
+			else {
+				this[key] = defaults[key];
+			}
 		}
 
 		this.layers = {
@@ -53,7 +58,12 @@
 		}
 
 		for (var key in layerDefaults) {
-			this.layers.default[key] = options[key] || layerDefaults[key];
+			if(key in options){
+				this.layers.default[key] = options[key];
+			}
+			else {
+				this.layers.default[key] = layerDefaults[key];
+			}
 		}
 
 		this.canvas = canvas;
@@ -79,7 +89,7 @@
 	}
 
 	Jolt.prototype.frame = function (handler) {
-		cAF(request)
+		cAF(request);
 
 		if (this.running) {
 
@@ -121,7 +131,12 @@
 		}
 
 		for (var key in layerDefaults) {
-			this.layers[layerName][key] = options[key] || layerDefaults[key];
+			if (key in options) {
+				this.layers[layerName][key] = options[key];
+			}
+			else {
+				this.layers[layerName][key] = layerDefaults[key];
+			}
 		}
 
 		this.resize(layerName);
@@ -218,7 +233,12 @@
 		layer.transition = {}
 
 		for (var key in transitionDefaults) {
-			layer.transition[key] = options[key] || transitionDefaults[key];
+			if (key in options) {
+				layer.transition[key] = options[key];
+			}
+			else {
+				layer.transition[key] = transitionDefaults[key];
+			}
 		}
 
 		that = this;
@@ -229,6 +249,7 @@
 				layer.scale = [0, 0];
 
 				layer.transition.update = function () {
+					layer.visible = true;
 					layer.transition.start = layer.transition.start || that.now;
 					dt = that.now - layer.transition.start;
 
@@ -238,7 +259,6 @@
 					if(dt >= layer.transition.duration) {
 						layer.scale = [1, 1];
 						layer.opacity = 1;
-						layer.visible = true;
 						that.stopTransition(layerName, callback);
 					}
 				};
@@ -276,8 +296,20 @@
 		}
 	}
 
+	Jolt.prototype.destroy = function (layerName) {
+		if (layerName) {
+			delete this.layers[layerName];
+		}
+		else {
+			this.layers = [];
+			delete this.canvas;
+			delete this.ctx;
+		}
+	}
+
 	Jolt.prototype.dispose = function () {
-		cAf(request);
+		cAF(request);
+		this.destroy();
 	}
 
 	// t: time elapsed, b: start value, c: end value, d: duration
