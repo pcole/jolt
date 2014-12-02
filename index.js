@@ -169,6 +169,10 @@
 		layer = this.layers[layerName];
 
 		callback(layer.ctx);
+
+		if(!this.running && layerName != 'default') {
+			this.load(layerName);
+		}
 	}
 
 	Jolt.prototype.clear = function (layerName) {
