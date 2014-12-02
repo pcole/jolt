@@ -69,6 +69,8 @@
 		this.canvas = canvas;
 		this.ctx = this.layers.default.ctx;
 
+		this.frameHandlers = [];
+
 		this.resize();
 
 		if (this.autostart) {
@@ -81,14 +83,26 @@
 	Jolt.prototype.start = function () {
 		this.now = +new Date();
 		this.running = true;
-		this.frame(function (){});
+		this.frame();
 	}
 
 	Jolt.prototype.stop = function () {
 		this.running = false;
 	}
 
-	Jolt.prototype.frame = function (handler) {
+	Jolt.prototype.onFrame = function (handler) {
+		this.frameHandlers.push(handler);
+
+		return this.frameHandlers.length;
+	}
+
+	Jolt.prototype.cancelFrame = function (index) {
+		if (this.frameHandlers[index]) {
+			this.frameHandlers.splice(index, 1);
+		}
+	}
+
+	Jolt.prototype.frame = function () {
 		cAF(request);
 
 		if (this.running) {
@@ -110,14 +124,16 @@
 				if(key != 'default' && layer.visible){
 					this.load(key);
 				}
+			}
 
-				handler.apply(this);
+			for (var i = 0; i < this.frameHandlers.length; i++) {
+				this.frameHandlers[i].apply(this);
 			}
 
 			that = this;
 
 			request = rAF(function() {
-				that.frame(handler);
+				that.frame();
 			});
 		}
 	}
@@ -302,6 +318,7 @@
 		}
 		else {
 			this.layers = [];
+			this.frameHandlers = [];
 			delete this.canvas;
 			delete this.ctx;
 		}

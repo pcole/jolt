@@ -30,7 +30,8 @@ ball = {
 }
 
 // On every frame
-jolt.frame(function (){
+jolt.onFrame(function (){
+	console.log(this);
 	ball.update()
 	this.draw(function (ctx){
 		ball.draw(ctx);
