@@ -18,9 +18,7 @@
 
 	var defaults = {
 		autostart: true,
-		fullscreen: true,
-		width: 300,
-		height: 150
+		fullscreen: false
 	}
 
 	var layerDefaults = {
@@ -39,7 +37,7 @@
 	/* constructor */
 
 	function Jolt (canvas, options) {
-		if (!(canvas.type && canvas.type == 'canvas')) {
+		if (!(canvas instanceof HTMLCanvasElement)) {
 			options = canvas
 			canvas = doc.createElement('canvas');
 		}
@@ -85,34 +83,33 @@
 
 		if (this.running) {
 
-			this.dt = ( clock = +new Date() ) - this.now;
-      this.millis += this.dt;
-      this.now = clock;
+			this.dt = (clock = +new Date()) - this.now;
+			this.now = clock;
 
-      for (key in this.layers) {
-      	layer = this.layers[key];
+			for (key in this.layers) {
+				layer = this.layers[key];
 
-      	if(layer.transition){
-      		layer.transition.update();
-      	}
+				if(layer.transition){
+					layer.transition.update();
+				}
 
-      	if(layer.autoclear){
-      		this.clear(key);
-      	}
+				if(layer.autoclear){
+					this.clear(key);
+				}
 
-      	if(key != 'default' && layer.visible){
-      		this.load(key);
-      	}
+				if(key != 'default' && layer.visible){
+					this.load(key);
+				}
 
-      	handler.apply(this);
-      }
+				handler.apply(this);
+			}
 
-      that = this;
+			that = this;
 
-      request = rAF(function() {
-      	that.frame(handler);
-      });
-    }
+			request = rAF(function() {
+				that.frame(handler);
+			});
+		}
 	}
 
 	Jolt.prototype.create = function(layerName, options) {
@@ -133,7 +130,13 @@
 	}
 
 	Jolt.prototype.draw = function (layerName, callback) {
-		layer = this.layers[layerName || 'default'];
+		if (typeof layerName == "function") {
+			callback = layerName;
+			layerName = 'default';
+		}
+
+		layer = this.layers[layerName];
+
 		callback(layer.ctx);
 	}
 
@@ -176,8 +179,12 @@
 
 	Jolt.prototype.resize = function (layerName) {
 		if (this.fullscreen) {
+			this.width = win.innerWidth;
 			this.height = win.innerHeight;
-      this.width = win.innerWidth;
+		}
+		else {
+			this.width = this.canvas.width;
+			this.height = this.canvas.height;
 		}
 
 		if (layerName) {

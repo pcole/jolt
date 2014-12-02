@@ -1,7 +1,6 @@
+canvas = document.getElementById('demo');
 
-window.jolt = new Jolt({fullscreen: true, autoclear: true});
-
-document.body.appendChild(jolt.canvas);
+window.jolt = new Jolt(canvas, {autoclear: true});
 
 jolt.create('circle', {visible: false});
 
